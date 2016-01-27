@@ -40,7 +40,7 @@ else:
         Returns height and width of current terminal. First tries to get
         size via termios.TIOCGWINSZ, then from environment. Defaults to 25
         lines x 80 columns if both methods fail.
-    
+
         :param fd: file descriptor (default: 1=stdout)
         :defaultx: The value to return for x if unable to determine
         (default: 80)
@@ -54,22 +54,22 @@ else:
         except:
             try:
                 wh = (os.environ['COLUMNS'], os.environ['LINES'])
-            except:  
+            except:
                 wh = (80, 25)
         return wh
 
     def get_keypress():
         import termios, fcntl, sys, os
         fd = sys.stdin.fileno()
-        
+
         oldterm = termios.tcgetattr(fd)
         newattr = termios.tcgetattr(fd)
         newattr[3] = newattr[3] & ~termios.ICANON & ~termios.ECHO
         termios.tcsetattr(fd, termios.TCSANOW, newattr)
-        
+
         oldflags = fcntl.fcntl(fd, fcntl.F_GETFL)
         fcntl.fcntl(fd, fcntl.F_SETFL, oldflags | os.O_NONBLOCK)
-        
+
         try:
             while 1:
                 try:
@@ -82,22 +82,31 @@ else:
         return c
 
 def page(text):
+    if not sys.stdout.isatty():
+        sys.stdout.write(text)
+        sys.stdout.flush()
+        return
     height = get_terminal_size()[1]
     current_line = 0
     for line in text.splitlines():
         if current_line >= height - 2:
-            print "        \r{}".format(line)
-            sys.stdout.write("--more--\r")
+            sys.stdout.write("        \r{}".format(line))
+            sys.stdout.flush()
+            sys.stdout.write("\n--more--\r")
+            sys.stdout.flush()
             key = get_keypress()
             if key == " ":
-                print "        "
+                sys.stdout.write("        \r")
+                sys.stdout.flush()
                 current_line = 0
             elif key == "q":
-                print "        "
+                sys.stdout.write("        ")
+                sys.stdout.flush()
                 break
             elif key == '\x03':
-                print "        "
+                sys.stdout.write("        \r")
+                sys.stdout.flush()
                 break
         else:
             print line
-        current_line += 1    
+        current_line += 1
