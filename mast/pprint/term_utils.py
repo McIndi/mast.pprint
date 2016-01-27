@@ -86,13 +86,7 @@ def page(text):
     current_line = 0
     for line in text.splitlines():
         if current_line >= height - 2:
-            if not line.strip():
-                print "        "
-            elif len(line.strip()) < 8:
-                print "        \r"
-                print line
-            else:
-                print line
+            print "        \r{}".format(line)
             sys.stdout.write("--more--\r")
             key = get_keypress()
             if key == " ":
@@ -106,4 +100,4 @@ def page(text):
                 break
         else:
             print line
-        current_line += 1            
+        current_line += 1    
