@@ -31,6 +31,7 @@ if sys.platform == 'win32':
             return (sizex, sizey)
         else:
             return (defaultx, defaulty)
+
     def get_keypress():
         import msvcrt
         return msvcrt.getch()
