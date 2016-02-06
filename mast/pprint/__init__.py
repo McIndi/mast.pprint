@@ -116,7 +116,62 @@ def print_table(seq, clear_screen=False):
         print(_template.format(*row))
 
 
-def pprint_plus(obj, color=True, page_output=False):
+def html_table(seq,
+               table_class="class",
+               header_row_class="class",
+               header_cell_class="class",
+               body_row_class="class",
+               body_cell_class="class"):
+    """
+    _function_: `mast.pprint.html_table(seq)`
+
+    DESCRIPTION:
+
+    Format a sequence as an HTML table. seq should be a sequence
+    of sequences with the first sequence being the header.
+
+    RETURNS:
+
+    `str`
+
+    USAGE:
+
+        :::python
+        >>> seq = [["this", "that", "the other"], [1,2,3], [4,5,6]]
+        >>> html = html_table(seq)
+
+    PARAMETERS:
+
+    * `seq`: `seq` should be a sequence of sequences (ie. a list of lists
+    or tuple of tuples)
+    * `table_class`: The value for the class attribute to assign to the
+    table element
+    * `header_row_class`: The value for the class attribute to assign to the
+    first `tr` element
+    * `header_cell_class`: The value for the class attribute to assign to the
+    first set of `td` elements
+    * `body_row_class`: The value for the class attribute to assign to the
+    rest of the `tr` elements
+    * `body_cell_class`:  The value for the class attribute to assign to the
+    rest of the `td` elements
+    """
+    table_tpl = '<table class="%s">{}</table>' % table_class
+    header_row_tpl = '<tr class="%s">{}</tr>' % header_row_class
+    body_row_tpl = '<tr class="%s">{}</tr>' % body_row_class
+    header_cell_tpl = '<td class="%s">{}</td>' % header_cell_class
+    body_cell_tpl = '<td class="%s">{}</td>' % body_cell_class
+
+    table = list(seq)
+    rows = []
+    for index, row in enumerate(table):
+        tpl = header_cell_tpl if index == 0 else body_cell_tpl
+        rows.append("".join([tpl.format(_cell) for _cell in row]))
+    for index, row in enumerate(list(rows)):
+        tpl = header_row_tpl if index == 0 else body_row_tpl
+        rows[index] = tpl.format(row)
+    return table_tpl.format("".join(rows))
+
+def pprint_plus(text, color=True, page_output=False):
     """
     _function_: `mast.pprint.pprint_plus(text)`
 
@@ -266,51 +321,3 @@ def pretty_print(elem, level=0):
     else:
         if level and (not elem.tail or not elem.tail.strip()):
             elem.tail = i
-
-
-# Work in progress (Leave commented out for production until ready)
-#
-#class Outputer(object):
-#    """
-#    Outputer
-#
-#    An object which can take information and output it in various
-#    formats.
-#    """
-#    def __init__(self, data):
-#        self.data = data
-#
-#    def __json__(self):
-#        if isinstance(self.data, dict) or isinstance(self.data, list):
-#            return json.dumps(self.data)
-#        elif isinstance(self.data, basestring):
-#            return json.dumps(json.loads(self.data))
-#        else:
-#            raise NotImplementedError(
-#                "Cannot convert {} to json".format(type(self.data)))
-#
-#    def __xml__(self):
-#        if isinstance(self.data, basestring):
-#            tree = etree.fromstring(self.data)
-#            pretty_print(tree)
-#            return etree.tostring(tree)
-#        elif isinstance(self.data, list):
-#            xml = "<root>{}</root>".format(
-#                "".join(["<item>{}</item>".format(str(x)) for x in self.data]))
-#            tree = etree.fromstring(xml)
-#            pretty_print(tree)
-#            return etree.tostring(tree)
-#        elif isinstance(self.data, dict):
-#            xml = "<root>{}</root>".format(
-#                    "".join(["<{0}>{1}</{0}>".format(
-#                        str(k), str(v)) for k, v in self.data.items()]))
-#            tree = etree.fromstring(xml)
-#            pretty_print(tree)
-#            return etree.tostring(tree)
-#        elif isinstance(self.data, etree.Element) \
-#                or isinstance(self.data, etree.ElementTree):
-#            pretty_print(self.data)
-#            return self.data
-#        else:
-#            raise NotImplementedError(
-#                "Cannot convert {} to xml".format(type(self.data)))
