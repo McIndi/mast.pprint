@@ -61,7 +61,6 @@ def term_highlight(text):
         ret = highlight(text,
                         guess_lexer(text),
                         TerminalFormatter())
-        print guess_lexer(text)
     except ClassNotFound:
         return text
     # Don't want to init if we couldn't guess the language
