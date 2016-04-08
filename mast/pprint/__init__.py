@@ -5,6 +5,7 @@ This module contains a single function which accepts an
 `xml.etree.ElementTree.Element` instance and inserts spaces
 to indent the xml.
 """
+import os
 import json
 from cStringIO import StringIO
 from term_utils import *
