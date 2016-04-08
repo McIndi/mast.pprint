@@ -5,12 +5,14 @@ This module contains a single function which accepts an
 `xml.etree.ElementTree.Element` instance and inserts spaces
 to indent the xml.
 """
+import os
 import json
 from cStringIO import StringIO
 from term_utils import *
 from pprint import pprint
 import xml.etree.cElementTree as etree
 
+__version__ = "{}-0".format(os.environ["MAST_VERSION"])
 
 def term_highlight(text):
     """
