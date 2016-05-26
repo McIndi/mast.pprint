@@ -104,7 +104,13 @@ def print_table(seq, clear_screen=False):
     _header_row = _table.pop(0)
     _template = ""
     for index, field in enumerate(_header_row):
-        column = [field] + [str(x[index]) for x in _table]
+        column = [field]
+        for row in _table:
+            try:
+                column.append(str(row[index]))
+            except IndexError:
+                row.append("")
+                column.append("")
         column_width = len(max(column, key=len))
         _template += " {%s: <%s} " % (index, column_width)
     if clear_screen:
